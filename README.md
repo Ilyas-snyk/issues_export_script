@@ -1,5 +1,5 @@
-# api-export
 📦 Snyk Issues Export Script
+
 This script automates the export of issue data from the Snyk REST API for one or more organizations. It exports issue reports as CSV files and saves them locally for further analysis.
 
 🔧 Features
