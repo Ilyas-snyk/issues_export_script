@@ -25,18 +25,20 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
             df = pd.read_csv(original_filepath)
             logging.debug(f"[{org_id}] Columns in {original_file}: {df.columns.tolist()}")
 
-            required_columns = {'ISSUE_SEVERITY', 'PRODUCT_NAME', 'ISSUE_TYPE'}
+            required_columns = {'ISSUE_SEVERITY', 'PRODUCT_NAME', 'ISSUE_TYPE', 'PROJECT_ORIGIN'}
             missing = required_columns - set(df.columns)
             if missing:
                 logging.warning(f"[{org_id}] Missing columns {missing} in {original_file}. Skipping.")
                 continue
 
+            # Filter by severity, product, issue type, and project origin
             filtered_df = df[
                 df['ISSUE_SEVERITY'].fillna('').str.lower().str.strip().isin(
                     [sev.lower().strip() for sev in filter_severities]
                 ) &
                 (df['PRODUCT_NAME'].fillna('').str.lower().str.strip() == filter_product.lower()) &
-                (df['ISSUE_TYPE'].fillna('').str.lower().str.strip() == filter_issue_type)
+                (df['ISSUE_TYPE'].fillna('').str.lower().str.strip() == filter_issue_type) &
+                (df['PROJECT_ORIGIN'].fillna('').str.lower().str.strip() == 'github-enterprise')
             ]
 
             if not filtered_df.empty:
@@ -61,7 +63,7 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
 
 
 if __name__ == "__main__":
-    BASE_EXPORT_DIR = "/path/to/snyk_exports"
+    BASE_EXPORT_DIR = "/Users/ilyasali/issues_export_script/snyk_exports"
     ORIGINAL_FILE_PATTERN = r"^snyk_export_[a-f0-9-]+_[a-f0-9-]+_\d+\.csv$"
     LOG_FILE = "snyk_filter_all.log"
     LOG_LEVEL = logging.INFO
