@@ -61,6 +61,7 @@ export_payload = {
                 "EXPLOIT_MATURITY",
                 "FIRST_INTRODUCED",
                 "PRODUCT_NAME",
+                "PROJECT_ORIGIN",
                 "ISSUE_URL",
                 "ISSUE_TYPE"
             ],
