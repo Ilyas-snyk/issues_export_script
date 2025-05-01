@@ -23,9 +23,11 @@ def run_exports(org_ids, token, logger):
             "attributes": {
                 "formats": ["csv"],
                 "columns": [
-                    "ISSUE_SEVERITY_RANK", "ISSUE_SEVERITY", "SCORE", "PROBLEM_TITLE", "CVE", "CWE",
-                    "PROJECT_NAME", "PROJECT_URL", "EXPLOIT_MATURITY", "FIRST_INTRODUCED",
-                    "PRODUCT_NAME", "PROJECT_ORIGIN", "ISSUE_URL", "ISSUE_TYPE"
+                    "PROBLEM_ID", "PRODUCT_NAME", "PROBLEM_TITLE", "VULN_DB_URL", "ISSUE_TYPE",
+                    "ISSUE_URL", "ISSUE_STATUS", "ISSUE_SEVERITY", "SCORE", "CVE", "CWE", "PROJECT_ORIGIN",
+                    "EXPLOIT_MATURITY", "INTRODUCTION_CATEGORY", "SNYK_CVSS_SCORE", "SNYK_CVSS_VECTOR",
+                    "COMPUTED_FIXABILITY","FIXED_IN_AVAILABLE", "FIXED_IN_VERSION", "PACKAGE_NAME_AND_VERSION",
+                    "FIRST_INTRODUCED", "LAST_INTRODUCED", "LAST_IGNORED","LAST_RESOLVED", "REACHABILITY","ORG_DISPLAY_NAME"
                 ],
                 "dataset": "issues",
                 "destination": { "type": "snyk" },

@@ -1,74 +1,112 @@
-## 📦 Snyk Issues Export Script
 
-This script automates the export of issue data from the [Snyk REST API](https://docs.snyk.io/api/rest) for one or more organizations. It exports issue reports as CSV files and saves them locally for further analysis.
+# Issues Export Script
 
-### 🔧 Features
+This repository contains Python scripts designed to filter and process Snyk export data from CSV files. It allows users to filter vulnerabilities and license issues based on various criteria such as severity, product, issue type, and project origin (GitHub Enterprise). The filtered results are saved into organized subdirectories.
 
-- Supports exporting from multiple Snyk organizations using a config file
-- Fetches issue data within a specific time window
-- Saves CSV export files to a structured local directory
-- Includes logging to both file and console for visibility
-- Uses the Snyk REST API (not the legacy API)
+## Prerequisites
 
----
+Before running the scripts, make sure you have:
 
-### 📁 Directory Structure
+- Python 3.x installed on your machine.
+- `pip` for installing Python dependencies.
 
-After running, the output will look like:
+### Required Python Libraries
 
-```
-snyk_exports/
-├── org-1-id/
-│   ├── snyk_export_org-1-id_exportid_1.csv
-│   └── ...
-├── org-2-id/
-│   └── snyk_export_org-2-id_exportid_1.csv
-```
-
----
-
-### 📋 Prerequisites
-
-- Python 3.7+
-- A valid [Snyk API token](https://docs.snyk.io/api-authentication)
-- Your organization IDs
-
----
-
-### 📂 Configuration
-
-1. **Set the Snyk API Token** as an environment variable:
-   ```bash
-   export SNYK_API_TOKEN=your-token-here
-   ```
-
-2. **Create a `config.json` file** in the same directory:
-   ```json
-   {
-     "org_ids": [
-       "org-1-id",
-       "org-2-id"
-     ]
-   }
-   ```
-
----
-
-### 🚀 Running the Script
+To install the required dependencies, run the following command in your terminal:
 
 ```bash
-python snyk_export.py
+pip install -r requirements.txt
 ```
 
----
+This will install:
 
-### 🧾 Logging
+- `pandas`: Used for data processing and manipulation.
+- `python-dotenv`: Helps load environment variables from the `.env` file.
 
-- Logs to `snyk_export.log`
-- Also logs to the console (stdout)
+## Setup
 
-You can change the log level by modifying `LOG_LEVEL` in the script:
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/ily-snyk/Issues_Export_Script.git
+   cd Issues_Export_Script
+   ```
+
+2. **Create a `.env` file** in the root directory with the following content:
+
+### `.env`
+
+```
+SNYK_API_TOKEN=your-token-here
+BASE_EXPORT_DIR=/path/to/your/snyk_exports
+LOG_FILE=./logs/snyk_filter_all.log
+PROJECT_ORIGIN=github-enterprise
+```
+
+- Replace `your-token-here` with your actual Snyk API token.
+- `BASE_EXPORT_DIR` should point to the directory containing your Snyk export CSV files.
+- `LOG_FILE` will store the logs generated during script execution.
+- `PROJECT_ORIGIN` should be set to `github-enterprise`.
+
+3. **Create the necessary directories** if they do not already exist:
+
+   ```bash
+   mkdir -p ./logs ./filtered_data
+   ```
+
+## Running the Scripts
+
+### Run `issues_filter.py` Script
+
+The `issues_filter.py` script processes and filters Snyk export CSV files based on the criteria specified in the script. It outputs the filtered data into organized subdirectories.
+
+To run the script, execute the following:
+
+```bash
+python issues_filter.py
+```
+
+This will:
+
+- Search the `BASE_EXPORT_DIR` for Snyk export files.
+- Filter data based on the severity (e.g., 'high' or 'critical'), product (e.g., "Snyk Open Source"), issue type (e.g., "vulnerability"), and project origin (e.g., `github-enterprise`).
+- Save the filtered results in subdirectories such as `filtered_open_source`, `filtered_code_vulns`, etc.
+
+Logs are saved in `snyk_filter_all.log` for debugging and tracking the script’s progress.
+
+### Running Multiple Scripts Together
+
+If you need to run multiple scripts sequentially, you can create a custom script to execute them. Here is an example:
+
 ```python
-LOG_LEVEL = logging.DEBUG  # For verbose logs
+import subprocess
+
+# Run the issues_filter.py script
+print("Running issues_filter.py...")
+subprocess.run(["python", "issues_filter.py"])
+
+# Run any additional scripts (if necessary)
+print("Running additional_script.py...")
+subprocess.run(["python", "additional_script.py"])
+
+print("Both scripts have completed successfully.")
 ```
 
+Save this script as `run_all_scripts.py` and execute it with:
+
+```bash
+python run_all_scripts.py
+```
+
+## Logging
+
+- All logs are stored in the `./logs` directory.
+- The `snyk_filter_all.log` file contains detailed information on the script's execution and any errors or issues that may arise.
+
+## Contributing
+
+Contributions are welcome! If you find any bugs or would like to suggest improvements, please feel free to open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for more information.

@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import logging
 import re
+from dotenv import load_dotenv
 
 def configure_logging(log_file, log_level):
     logging.basicConfig(filename=log_file, level=log_level,
@@ -9,7 +10,7 @@ def configure_logging(log_file, log_level):
 
 
 def process_organization(org_path, original_file_pattern, filter_severities, filter_product,
-                         filter_issue_type, output_subfolder, combined_filename, org_id):
+                         filter_issue_type, output_subfolder, combined_filename, org_id, project_origin):
     """Processes and filters CSVs for a single filter type, returns one combined CSV per org."""
     original_files = [f for f in os.listdir(org_path) if re.match(original_file_pattern, f)]
     logging.info(f"[{org_id}] Found files: {original_files}")
@@ -38,7 +39,7 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
                 ) &
                 (df['PRODUCT_NAME'].fillna('').str.lower().str.strip() == filter_product.lower()) &
                 (df['ISSUE_TYPE'].fillna('').str.lower().str.strip() == filter_issue_type) &
-                (df['PROJECT_ORIGIN'].fillna('').str.lower().str.strip() == 'github-enterprise')
+                (df['PROJECT_ORIGIN'].fillna('').str.lower().str.strip() == project_origin.lower())
             ]
 
             if not filtered_df.empty:
@@ -63,13 +64,21 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
 
 
 if __name__ == "__main__":
-    BASE_EXPORT_DIR = "/Users/ilyasali/issues_export_script/snyk_exports"
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    BASE_EXPORT_DIR = os.environ.get("BASE_EXPORT_DIR", "")
+    LOG_FILE = os.environ.get("LOG_FILE", "snyk_filter_all.log")
+    PROJECT_ORIGIN = os.environ.get("PROJECT_ORIGIN", "github-enterprise")
     ORIGINAL_FILE_PATTERN = r"^snyk_export_[a-f0-9-]+_[a-f0-9-]+_\d+\.csv$"
-    LOG_FILE = "snyk_filter_all.log"
     LOG_LEVEL = logging.INFO
 
+    # Ensure logs directory exists
+    log_dir = os.path.dirname(LOG_FILE)
+    if log_dir and not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
+
     configure_logging(LOG_FILE, LOG_LEVEL)
-    logging.info("=== Starting Combined Snyk Filtering Script ===")
 
     if not os.path.exists(BASE_EXPORT_DIR):
         logging.error(f"Base export directory not found: {BASE_EXPORT_DIR}")
@@ -92,7 +101,8 @@ if __name__ == "__main__":
             "vulnerability",
             "filtered_open_source",
             "Snyk Open Source Critical and High Vulns.csv",
-            org_id
+            org_id,
+            PROJECT_ORIGIN
         )
 
         # 2. License Issues
@@ -104,7 +114,8 @@ if __name__ == "__main__":
             "license",
             "filtered_license_issues",
             "Snyk Open Source High Severity Licenses.csv",
-            org_id
+            org_id,
+            PROJECT_ORIGIN
         )
 
         # 3. Snyk Code Vulnerabilities
@@ -116,7 +127,8 @@ if __name__ == "__main__":
             "vulnerability",
             "filtered_code_vulns",
             "Snyk Code High Vulns.csv",
-            org_id
+            org_id,
+            PROJECT_ORIGIN
         )
 
     logging.info("=== Snyk Filtering Complete ===")
