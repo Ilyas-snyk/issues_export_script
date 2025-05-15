@@ -53,7 +53,7 @@ This will install:
 
 4. **Add the organization IDs to `config.json`**:
 
-   Create a file named `config.json` in the root directory (if it doesn’t exist already), and add the organization IDs you want to process:
+   Edit the file named `config.json` in the root directory (if it doesn’t exist already), and add the organization IDs you want to process:
 
    ```json
    {
