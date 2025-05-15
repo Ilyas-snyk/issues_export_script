@@ -1,7 +1,6 @@
-
 # Issues Export Script
 
-This repository contains Python scripts designed to filter and process Snyk export data from CSV files. It allows users to filter vulnerabilities and license issues based on various criteria such as severity, product, issue type, and project origin (GitHub Enterprise). The filtered results are saved into organized subdirectories.
+This repository contains Python scripts designed to filter and process Snyk export data from CSV files. It allows users to filter vulnerabilities and license issues based on various criteria such as severity, product, issue type, and project origin (e.g., GitHub Enterprise). The filtered results are saved into organized subdirectories.
 
 ## Prerequisites
 
@@ -34,36 +33,39 @@ This will install:
 
 2. **Create a `.env` file** in the root directory with the following content:
 
-### `.env`
+   ```env
+   SNYK_API_TOKEN=your-token-here
+   BASE_EXPORT_DIR=/path/to/your/snyk_exports
+   LOG_FILE=./logs/snyk_filter_all.log
+   PROJECT_ORIGIN=github-enterprise
+   ```
 
-```
-SNYK_API_TOKEN=your-token-here
-BASE_EXPORT_DIR=/path/to/your/snyk_exports
-LOG_FILE=./logs/snyk_filter_all.log
-PROJECT_ORIGIN=github-enterprise
-```
-
-- Replace `your-token-here` with your actual Snyk API token.
-- `BASE_EXPORT_DIR` should point to the directory containing your Snyk export CSV files.
-- `LOG_FILE` will store the logs generated during script execution.
-- `PROJECT_ORIGIN` should be set to `github-enterprise`.
+   - Replace `your-token-here` with your actual Snyk API token.
+   - `BASE_EXPORT_DIR` should point to the directory containing your Snyk export CSV files.
+   - `LOG_FILE` will store the logs generated during script execution.
+   - `PROJECT_ORIGIN` should be set to `github-enterprise`.
 
 3. **Create the necessary directories** if they do not already exist:
 
    ```bash
    mkdir -p ./logs ./filtered_data
    ```
-4. **Create a config.json file in the root directory (if it doesn’t exist already), and add the organization IDs you want to process:
 
-{
-  "org_ids": [
-    "org-12345678-aaaa-bbbb-cccc-1234567890ab",
-    "org-87654321-dddd-eeee-ffff-0987654321ba"
-  ]
-}
+4. **Add the organization IDs to `config.json`**:
 
-Replace the example org IDs with your actual Snyk organization IDs.
-This file is used by the script to filter or reference data specific to your organizations.
+   Create a file named `config.json` in the root directory (if it doesn’t exist already), and add the organization IDs you want to process:
+
+   ```json
+   {
+     "org_ids": [
+       "org-12345678-aaaa-bbbb-cccc-1234567890ab",
+       "org-87654321-dddd-eeee-ffff-0987654321ba"
+     ]
+   }
+   ```
+
+   - Replace the example org IDs with your actual Snyk organization IDs.
+   - This file is used by the script to filter or reference data specific to your organizations.
 
 ## Running the Scripts
 
@@ -80,14 +82,14 @@ python issues_filter.py
 This will:
 
 - Search the `BASE_EXPORT_DIR` for Snyk export files.
-- Filter data based on the severity (e.g., 'high' or 'critical'), product (e.g., "Snyk Open Source"), issue type (e.g., "vulnerability"), and project origin (e.g., `github-enterprise`).
+- Filter data based on severity (e.g., 'high' or 'critical'), product (e.g., "Snyk Open Source"), issue type (e.g., "vulnerability"), and project origin (e.g., `github-enterprise`).
 - Save the filtered results in subdirectories such as `filtered_open_source`, `filtered_code_vulns`, etc.
 
 Logs are saved in `snyk_filter_all.log` for debugging and tracking the script’s progress.
 
 ### Running Multiple Scripts Together
 
-If you need to run multiple scripts sequentially, you can create a custom script to execute them. Here is an example:
+If you need to run multiple scripts sequentially, you can create a custom script to execute them. For example:
 
 ```python
 import subprocess
