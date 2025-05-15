@@ -35,7 +35,7 @@ This will install:
 
    ```env
    SNYK_API_TOKEN=your-token-here
-   BASE_EXPORT_DIR=/path/to/your/snyk_exports
+   BASE_EXPORT_DIR= /Users/[your-name]/Issues_Export_Script/snyk_exports
    LOG_FILE=./logs/snyk_filter_all.log
    PROJECT_ORIGIN=github-enterprise
    ```
