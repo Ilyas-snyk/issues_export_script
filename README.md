@@ -53,6 +53,17 @@ PROJECT_ORIGIN=github-enterprise
    ```bash
    mkdir -p ./logs ./filtered_data
    ```
+4. **Create a config.json file in the root directory (if it doesn’t exist already), and add the organization IDs you want to process:
+
+{
+  "org_ids": [
+    "org-12345678-aaaa-bbbb-cccc-1234567890ab",
+    "org-87654321-dddd-eeee-ffff-0987654321ba"
+  ]
+}
+
+Replace the example org IDs with your actual Snyk organization IDs.
+This file is used by the script to filter or reference data specific to your organizations.
 
 ## Running the Scripts
 
