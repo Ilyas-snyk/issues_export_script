@@ -8,9 +8,9 @@ def configure_logging(log_file, log_level):
     logging.basicConfig(filename=log_file, level=log_level,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 def process_organization(org_path, original_file_pattern, filter_severities, filter_product,
-                         filter_issue_type, output_subfolder, combined_filename, org_id, project_origin):
+                         filter_issue_type, output_subfolder, combined_filename, org_id,
+                         project_origin, filter_fixability=None):
     """Processes and filters CSVs for a single filter type, returns one combined CSV per org."""
     original_files = [f for f in os.listdir(org_path) if re.match(original_file_pattern, f)]
     logging.info(f"[{org_id}] Found files: {original_files}")
@@ -42,6 +42,17 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
                 (df['PROJECT_ORIGIN'].fillna('').str.lower().str.strip() == project_origin.lower())
             ]
 
+            # Apply COMPUTED_FIXABILITY filter if requested
+            if filter_fixability:
+                if "COMPUTED_FIXABILITY" not in filtered_df.columns:
+                    logging.warning(f"[{org_id}] COMPUTED_FIXABILITY column not found in {original_file}. Skipping fixability filtering.")
+                else:
+                    filtered_df = filtered_df[
+                        filtered_df['COMPUTED_FIXABILITY'].fillna('').str.lower().str.strip().isin(
+                            [fix.lower().strip() for fix in filter_fixability]
+                        )
+                    ]
+
             if not filtered_df.empty:
                 all_filtered_data.append(filtered_df)
 
@@ -62,9 +73,7 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
     else:
         logging.info(f"[{org_id}] No data matched for {filter_product} / {filter_issue_type}.")
 
-
 if __name__ == "__main__":
-    from dotenv import load_dotenv
     load_dotenv()
 
     BASE_EXPORT_DIR = os.environ.get("BASE_EXPORT_DIR", "")
@@ -92,7 +101,7 @@ if __name__ == "__main__":
     for org_id in org_dirs:
         org_path = os.path.join(BASE_EXPORT_DIR, org_id)
 
-        # 1. Open Source Vulnerabilities
+        # 1. Open Source Vulnerabilities with fixability filter
         process_organization(
             org_path,
             ORIGINAL_FILE_PATTERN,
@@ -102,10 +111,11 @@ if __name__ == "__main__":
             "filtered_open_source",
             "Snyk Open Source Critical and High Vulns.csv",
             org_id,
-            PROJECT_ORIGIN
+            PROJECT_ORIGIN,
+            filter_fixability=["Fixable", "Partially Fixable"]
         )
 
-        # 2. License Issues
+        # 2. License Issues (no fixability filter)
         process_organization(
             org_path,
             ORIGINAL_FILE_PATTERN,
@@ -118,7 +128,7 @@ if __name__ == "__main__":
             PROJECT_ORIGIN
         )
 
-        # 3. Snyk Code Vulnerabilities
+        # 3. Snyk Code Vulnerabilities (no fixability filter)
         process_organization(
             org_path,
             ORIGINAL_FILE_PATTERN,
