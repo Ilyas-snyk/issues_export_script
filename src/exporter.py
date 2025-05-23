@@ -3,6 +3,12 @@ import requests
 import time
 import os
 import json
+import csv
+import re
+
+def sanitize_name(name: str) -> str:
+    # Remove or replace characters not safe for folder/file names
+    return re.sub(r'[^a-zA-Z0-9_\- ]+', '_', name).strip()
 
 def run_exports(org_ids, token, logger):
     base_url_template = "https://api.snyk.io/rest/orgs/{org_id}"
@@ -40,6 +46,9 @@ def run_exports(org_ids, token, logger):
             }
         }
     }
+
+    base_dir = os.path.abspath("snyk_exports")
+    os.makedirs(base_dir, exist_ok=True)
 
     for org_id in org_ids:
         logger.info(f"--- Processing Organization: {org_id} ---")
@@ -84,18 +93,50 @@ def run_exports(org_ids, token, logger):
                 logger.warning("No export results found.")
                 continue
 
-            org_dir = f"snyk_exports/{org_id}"
-            os.makedirs(org_dir, exist_ok=True)
-
             for idx, result in enumerate(results):
                 export_url = result.get("url")
                 if export_url:
                     file_res = requests.get(export_url)
                     file_res.raise_for_status()
-                    filename = f"{org_dir}/snyk_export_{org_id}_{export_id}_{idx + 1}.csv"
-                    with open(filename, "wb") as f:
+
+                    csv_content = file_res.content.decode('utf-8')
+
+                    reader = csv.DictReader(csv_content.splitlines())
+                    first_row = next(reader, None)
+
+                    if first_row:
+                        logger.debug(f"CSV columns: {list(first_row.keys())}")
+                        # Case-insensitive lookup of ORG_DISPLAY_NAME
+                        header_map = {k.lower(): k for k in first_row.keys()}
+                        org_display_key = header_map.get('org_display_name')
+                        if org_display_key:
+                            raw_org_name = first_row[org_display_key]
+                            logger.debug(f"Extracted ORG_DISPLAY_NAME: {raw_org_name}")
+                            safe_org_name = sanitize_name(raw_org_name)
+                        else:
+                            logger.warning("ORG_DISPLAY_NAME column not found, using org_id instead.")
+                            safe_org_name = sanitize_name(org_id)
+                    else:
+                        logger.warning("No rows in CSV, using org_id as folder name.")
+                        safe_org_name = sanitize_name(org_id)
+
+                    # Construct full safe paths
+                    org_dir = os.path.join(base_dir, safe_org_name)
+                    os.makedirs(org_dir, exist_ok=True)
+
+                    filename = os.path.join(org_dir, f"snyk_export_{safe_org_name}_{export_id}_{idx + 1}.csv")
+                    abs_path = os.path.abspath(filename)
+
+                    # Security check to prevent path traversal
+                    if not abs_path.startswith(base_dir + os.sep):
+                        logger.error(f"Unsafe file path detected: {abs_path}")
+                        continue  # Skip saving this file
+
+                    # Write the file to the full safe path (fix here)
+                    with open(abs_path, "wb") as f:
                         f.write(file_res.content)
-                    logger.info(f"Saved: {filename}")
+
+                    logger.info(f"Saved: {abs_path}")
                 else:
                     logger.warning("Missing export URL in result.")
 
