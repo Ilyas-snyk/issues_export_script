@@ -31,7 +31,7 @@ This will install:
    cd Issues_Export_Script
    ```
 
-2. **Create a `.env` file** in the root directory with the following content:
+2. **Edit the `.env` file** in the root directory with the following content:
 
    ```env
    SNYK_API_TOKEN=your-token-here
@@ -43,7 +43,7 @@ This will install:
    - Replace `your-token-here` with your actual Snyk API token.
    - `BASE_EXPORT_DIR` should point to the directory containing your Snyk export CSV files.
    - `LOG_FILE` will store the logs generated during script execution.
-   - `PROJECT_ORIGIN` should be set to `github-enterprise`.
+   - `PROJECT_ORIGIN` should be set to `github-cloud-app`.
 
 3. **Create the necessary directories** if they do not already exist:
 
@@ -66,6 +66,21 @@ This will install:
 
    - Replace the example org IDs with your actual Snyk organization IDs.
    - This file is used by the script to filter or reference data specific to your organizations.
+
+5. **[Optional] Customize the date range in `exporter.py`**:
+
+   The `exporter.py` file is used automatically to fetch and filter data. If you need to change the date range for the issues being exported, edit lines 40–44:
+   
+   ```src/exporter.py
+   {
+   "filters": {
+     "introduced": {
+       "from": "2025-01-30T00:00:00Z",
+       "to": "2025-04-01T00:00:00Z"
+        }
+      }
+   }
+   ```
 
 ## Running the Scripts
 
