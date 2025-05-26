@@ -117,7 +117,7 @@ python issues_filter.py
 This will:
 
 - Search the `BASE_EXPORT_DIR` for Snyk export files.
-- Filter data based on severity (e.g., 'high' or 'critical'), product (e.g., "Snyk Open Source"), issue type (e.g., "vulnerability"), and project origin (e.g., `github-enterprise`).
+- Filter data based on severity (e.g., 'high' or 'critical'), product (e.g., "Snyk Open Source"), issue type (e.g., "vulnerability"), and project origin (e.g., `github-cloud-app`).
 - Save the filtered results in subdirectories such as `filtered_open_source`, `filtered_code_vulns`, etc.
 
 Logs are saved in `snyk_filter_all.log` for debugging and tracking the script’s progress.
