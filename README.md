@@ -89,7 +89,7 @@ This will install:
 
 ## Running the Scripts
 
-### Run `main.py.py` Script
+### Run `main.py` Script
 
 Run this script to automatically fetch vulnerabilities across all specified orgs in config.json and within the configured date range.
 
