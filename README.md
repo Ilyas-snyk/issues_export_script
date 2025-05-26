@@ -27,7 +27,7 @@ This will install:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/ily-snyk/Issues_Export_Script.git
+   git clone https://github.com/ilyas-snyk/Issues_Export_Script.git
    cd Issues_Export_Script
    ```
 
