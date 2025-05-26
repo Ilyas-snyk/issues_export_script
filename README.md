@@ -37,7 +37,7 @@ This will install:
    SNYK_API_TOKEN=your-token-here
    BASE_EXPORT_DIR= /Users/[your-name]/Issues_Export_Script/snyk_exports
    LOG_FILE=./logs/snyk_filter_all.log
-   PROJECT_ORIGIN=github-enterprise
+   PROJECT_ORIGIN=github-cloud-app
    ```
 
    - Replace `your-token-here` with your actual Snyk API token.
