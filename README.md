@@ -102,30 +102,6 @@ This will:
 
 Logs are saved in `snyk_filter_all.log` for debugging and tracking the script’s progress.
 
-### Running Multiple Scripts Together
-
-If you need to run multiple scripts sequentially, you can create a custom script to execute them. For example:
-
-```python
-import subprocess
-
-# Run the issues_filter.py script
-print("Running issues_filter.py...")
-subprocess.run(["python", "issues_filter.py"])
-
-# Run any additional scripts (if necessary)
-print("Running additional_script.py...")
-subprocess.run(["python", "additional_script.py"])
-
-print("Both scripts have completed successfully.")
-```
-
-Save this script as `run_all_scripts.py` and execute it with:
-
-```bash
-python run_all_scripts.py
-```
-
 ## Logging
 
 - All logs are stored in the `./logs` directory.
