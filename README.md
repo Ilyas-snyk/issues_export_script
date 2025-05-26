@@ -101,7 +101,7 @@ This will:
 
 - Query Snyk’s REST API for each org
 - Apply the introduced date filter
-- Save issues into structured folders (e.g., output/org-[org-name]/)
+- Save issues into structured folders (e.g., snyk_exports/[org-name]/)
 - Log progress and errors to the path defined in .env
 
 ### Run `issues_filter.py` Script
