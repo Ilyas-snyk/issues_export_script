@@ -25,7 +25,7 @@ This will install:
 
 - `pandas`: Used for data processing and manipulation.
 - `python-dotenv`: Helps load environment variables from the `.env` file.
-- `requests`: helps with API communication
+- `requests`: Helps with API communication
 
 ## Setup
 
