@@ -1,6 +1,6 @@
 # Issues Export Script
 
-This repository contains Python scripts designed to filter and process Snyk export data from CSV files. It allows users to filter vulnerabilities and license issues based on various criteria such as severity, product, issue type, and project origin (e.g., GitHub Enterprise). The filtered results are saved into organized subdirectories.
+This repository contains Python scripts designed to fetch, filter, and organize Snyk vulnerability and license issue data. It supports both direct CSV export filtering and automated API-based export across multiple organizations, allowing you to filter by severity, issue type, product, origin, and introduction date.
 
 ## Prerequisites
 
@@ -8,6 +8,10 @@ Before running the scripts, make sure you have:
 
 - Python 3.x installed on your machine.
 - `pip` for installing Python dependencies.
+- Snyk API token
+- Snyk org IDs
+
+
 
 ### Required Python Libraries
 
@@ -21,6 +25,7 @@ This will install:
 
 - `pandas`: Used for data processing and manipulation.
 - `python-dotenv`: Helps load environment variables from the `.env` file.
+- `requests`: helps with API communication
 
 ## Setup
 
@@ -84,6 +89,21 @@ This will install:
 
 ## Running the Scripts
 
+### Run `main.py.py` Script
+
+Run this script to automatically fetch vulnerabilities across all specified orgs in config.json and within the configured date range.
+
+```bash
+python main.py
+```
+
+This will:
+
+- Query Snyk’s REST API for each org
+- Apply the introduced date filter
+- Save issues into structured folders (e.g., output/org-[org-name]/)
+- Log progress and errors to the path defined in .env
+
 ### Run `issues_filter.py` Script
 
 The `issues_filter.py` script processes and filters Snyk export CSV files based on the criteria specified in the script. It outputs the filtered data into organized subdirectories.
@@ -101,6 +121,25 @@ This will:
 - Save the filtered results in subdirectories such as `filtered_open_source`, `filtered_code_vulns`, etc.
 
 Logs are saved in `snyk_filter_all.log` for debugging and tracking the script’s progress.
+
+## Output Structure
+
+Running `main.py`
+Downloads CSV files from an S3 bucket for each Snyk organization and saves them locally under:
+
+```bash
+/Users/your-name/issues_export_script/snyk_exports/org_name
+```
+These files contain all vulnerabilities and license issues for the organization within the date range configured in `exporter.py`.
+
+**Filtered CSV Output (issues_filter.py)**
+
+Running `issues_filter.py` filters these local CSV exports by severity, issue type, product, and origin. The filtered results are saved in:
+
+```bash
+/Users/your-name/issues_export_script/snyk_exports/org_name/filtered_[type]
+```
+Where [type] includes open_source, code_vulns, and license_issues.
 
 ## Logging
 
