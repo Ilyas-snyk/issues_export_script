@@ -72,7 +72,7 @@ This will install:
    - Replace the example org IDs with your actual Snyk organization IDs.
    - This file is used by the script to filter or reference data specific to your organizations.
 
-5. **[Optional] Customize the date range in `exporter.py`**:
+5. ** Customize the date range in `exporter.py`**:
 
    The `exporter.py` file is used automatically to fetch and filter data. If you need to change the date range for the issues being exported, edit lines 40–44:
    
@@ -86,6 +86,17 @@ This will install:
       }
    }
    ```
+
+6. ** Install Dependencies**:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+This installs:
+
+- pandas: for data manipulation.
+- python-dotenv: for reading .env variables.
+- requests: for API communication.
 
 ## Running the Scripts
 
