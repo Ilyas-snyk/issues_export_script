@@ -61,6 +61,13 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
 
     if all_filtered_data:
         combined_df = pd.concat(all_filtered_data, ignore_index=True)
+
+        # Deduplicate full rows
+        before_dedup = len(combined_df)
+        combined_df.drop_duplicates(inplace=True)
+        after_dedup = len(combined_df)
+        logging.info(f"[{org_id}] Removed {before_dedup - after_dedup} duplicate rows after combining.")
+
         output_path = os.path.join(org_path, output_subfolder)
         os.makedirs(output_path, exist_ok=True)
         output_file = os.path.join(output_path, combined_filename)
