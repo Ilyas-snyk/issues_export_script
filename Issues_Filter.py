@@ -42,6 +42,14 @@ def process_organization(org_path, original_file_pattern, filter_severities, fil
                 (df['PROJECT_ORIGIN'].fillna('').str.lower().str.strip() == project_origin.lower())
             ]
 
+            # Filter only open issues
+            if "ISSUE_STATUS" in filtered_df.columns:
+                filtered_df = filtered_df[
+                    filtered_df["ISSUE_STATUS"].fillna("").str.lower().str.strip() == "open"
+                ]
+            else:
+                logging.warning(f"[{org_id}] ISSUE_STATUS column not found in {original_file}. Skipping status filtering.")
+
             # Apply COMPUTED_FIXABILITY filter if requested
             if filter_fixability:
                 if "COMPUTED_FIXABILITY" not in filtered_df.columns:
