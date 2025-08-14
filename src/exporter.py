@@ -40,7 +40,7 @@ def run_exports(org_ids, token, logger):
                 "filters": {
                     "introduced": {
                         "from": "2025-01-30T00:00:00Z",
-                        "to": "2025-04-01T00:00:00Z"
+                        "to": "2025-08-10T00:00:00Z"
                     }
                 }
             }
